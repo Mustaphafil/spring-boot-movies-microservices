@@ -35,7 +35,7 @@ public class MovieCatalogueResource implements Serializable {
 		// RestTemplate restTemplate = new RestTemplate();
 		// WebClient.Builder builder=WebClient.builder();
 
-		UserRating userRatings = webClientBuilder.build().get().uri("http://localhost:8083/ratingdata/users/foo")
+		UserRating userRatings = webClientBuilder.build().get().uri("http://movie-rating-service/ratingdata/users/foo")
 				.retrieve().bodyToMono(UserRating.class).block();
 
 		// List<Rating> listRatings = Arrays.asList(new Rating("1232", 5), new
@@ -44,11 +44,11 @@ public class MovieCatalogueResource implements Serializable {
 
 		return userRatings.getUsreRatings().stream().map(rating -> {
 			// Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" +
-			// rating.getMovieId(), Movie.class);
+			// rating.getMovieId(), Movie.class);MOVIE-INFO-SERVICE
 
-			Movie movie = webClientBuilder.build().get().uri("http://localhost:8082/movies/" + rating.getMovieId())
+			Movie movie = webClientBuilder.build().get().uri("http://movie-info-service/movies/" + rating.getMovieId())
 					.retrieve().bodyToMono(Movie.class).block();
-			return new CatalogueItem(movie.getName(), "DESC", rating.getRating());
+			return new CatalogueItem(movie.getName(), movie.getDescription(), rating.getRating());
 		}).collect(Collectors.toList());
 
 		// get all related movies
