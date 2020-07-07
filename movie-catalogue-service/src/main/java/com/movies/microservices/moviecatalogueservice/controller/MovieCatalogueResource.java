@@ -1,6 +1,7 @@
 package com.movies.microservices.moviecatalogueservice.controller;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.movies.microservices.moviecatalogueservice.model.CatalogueItem;
 import com.movies.microservices.moviecatalogueservice.model.Movie;
 import com.movies.microservices.moviecatalogueservice.model.UserRating;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
 @RequestMapping("/catalog")
@@ -30,6 +32,7 @@ public class MovieCatalogueResource implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@GetMapping("/movie/{userId}")
+	@HystrixCommand(fallbackMethod = "getFallBackCatalog")
 	public List<CatalogueItem> getCatalog(@PathVariable("userId") String userId) {
 
 		// RestTemplate restTemplate = new RestTemplate();
@@ -62,5 +65,13 @@ public class MovieCatalogueResource implements Serializable {
 		// );
 		// return listMovies;
 	}
+	
+	public List<CatalogueItem> getFallBackCatalog(@PathVariable("userId") String userId) {
+
+		return Arrays.asList(new CatalogueItem("no movie", "no movie", 0));
+
+
+	}
+
 
 }
